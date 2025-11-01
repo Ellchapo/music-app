@@ -122,9 +122,9 @@ const LoginPage: React.FC<LoginPageProps> = ({ onNavigate }) => {
                     className="w-full px-3 border-b-2 border-gray-300 focus:border-yellow-500 focus:outline-none bg-transparent text-black pr-8"
                   />
                   <button
-                    type="button"
+                    
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-0 top-1/2 -translate-y-1/2 text-gray-600 hover:text-black"
+                    className="absolute right-0 focus:!outline-none active:!outline-none !border-none top-1/2 -translate-y-1/2 !bg-transparent text-gray-600 hover:text-black"
                   >
                     {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                   </button>
@@ -158,7 +158,7 @@ const LoginPage: React.FC<LoginPageProps> = ({ onNavigate }) => {
                       onClick={() =>
                         setShowConfirmPassword(!showConfirmPassword)
                       }
-                      className="absolute right-0 top-1/2 -translate-y-1/2 text-gray-600 hover:text-black"
+                      className="absolute right-0 focus:!outline-none active:!outline-none !border-none !bg-transparent top-1/2 -translate-y-1/2 text-gray-600 hover:text-black"
                     >
                       {showConfirmPassword ? (
                         <EyeOff size={18} />
