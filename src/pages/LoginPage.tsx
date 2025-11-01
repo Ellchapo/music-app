@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useDispatch } from "react-redux";
 import { signup, login } from "../redux/userSlice";
 import type { AppDispatch } from "../redux/store";
+import { Eye, EyeOff } from "lucide-react";
 
 interface LoginPageProps {
   onNavigate: (page: string) => void;
@@ -17,6 +18,8 @@ const LoginPage: React.FC<LoginPageProps> = ({ onNavigate }) => {
     confirmPassword: "",
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const validate = (): boolean => {
     const e: Record<string, string> = {};
@@ -87,7 +90,7 @@ const LoginPage: React.FC<LoginPageProps> = ({ onNavigate }) => {
                 </div>
               )}
 
-              <div >
+              <div>
                 <label className="block  text-[0.8vw] text-gray-500 uppercase mb-2">
                   Mail
                 </label>
@@ -104,39 +107,67 @@ const LoginPage: React.FC<LoginPageProps> = ({ onNavigate }) => {
                 )}
               </div>
 
-              <div>
+              <div className="relative">
                 <label className="block text-[0.8vw] text-gray-500 uppercase mb-2">
                   Password
                 </label>
-                <input
-                  type="password"
-                  value={formData.password}
-                  onChange={(e) =>
-                    setFormData({ ...formData, password: e.target.value })
-                  }
-                  className="w-full px-3 border-b-2 border-gray-300 focus:border-yellow-500 focus:outline-none bg-transparent text-black"
-                />
+
+                <div className="relative">
+                  <input
+                    type={showPassword ? "text" : "password"}
+                    value={formData.password}
+                    onChange={(e) =>
+                      setFormData({ ...formData, password: e.target.value })
+                    }
+                    className="w-full px-3 border-b-2 border-gray-300 focus:border-yellow-500 focus:outline-none bg-transparent text-black pr-8"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute right-0 top-1/2 -translate-y-1/2 text-gray-600 hover:text-black"
+                  >
+                    {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                  </button>
+                </div>
+
                 {errors.password && (
                   <p className="text-red-500 text-xs mt-1">{errors.password}</p>
                 )}
               </div>
 
               {isSignup && (
-                <div>
+                <div className="relative">
                   <label className="block text-xs text-gray-500 uppercase mb-2">
                     Confirm Password
                   </label>
-                  <input
-                    type="password"
-                    value={formData.confirmPassword}
-                    onChange={(e) =>
-                      setFormData({
-                        ...formData,
-                        confirmPassword: e.target.value,
-                      })
-                    }
-                    className="w-full px-3 border-b-2 border-gray-300 focus:border-yellow-500 focus:outline-none bg-transparent text-black"
-                  />
+
+                  <div className="relative">
+                    <input
+                      type={showConfirmPassword ? "text" : "password"}
+                      value={formData.confirmPassword}
+                      onChange={(e) =>
+                        setFormData({
+                          ...formData,
+                          confirmPassword: e.target.value,
+                        })
+                      }
+                      className="w-full px-3 border-b-2 border-gray-300 focus:border-yellow-500 focus:outline-none bg-transparent text-black pr-8"
+                    />
+                    <button
+                      type="button"
+                      onClick={() =>
+                        setShowConfirmPassword(!showConfirmPassword)
+                      }
+                      className="absolute right-0 top-1/2 -translate-y-1/2 text-gray-600 hover:text-black"
+                    >
+                      {showConfirmPassword ? (
+                        <EyeOff size={18} />
+                      ) : (
+                        <Eye size={18} />
+                      )}
+                    </button>
+                  </div>
+
                   {errors.confirmPassword && (
                     <p className="text-red-500 text-xs mt-1">
                       {errors.confirmPassword}
