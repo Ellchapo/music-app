@@ -74,7 +74,7 @@ const LoginPage: React.FC<LoginPageProps> = ({ onNavigate }) => {
 
   return (
     <div className="min-h-screen flex py-[5vw] items-center justify-center bg-gradient-to-br from-yellow-400 via-amber-300 to-orange-400">
-      <div className="flex items-center py-[2vw] w-[65vw] rounded-md justify-center bg-gradient-to-br from-gray-100 to-gray-200 relative overflow-hidden">
+      <div className="flex items-center py-[2vw] w-[65vw] rounded-lg justify-center bg-gradient-to-br from-gray-100 to-gray-200 relative overflow-hidden">
         {/* Left side - Form */}
         <div className="w-full md:w-1/2 flex items-center justify-center px-8 z-10">
           <div className="w-full max-w-md">
