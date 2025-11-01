@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useDispatch } from "react-redux";
+import { useForm } from "react-hook-form";
 import { signup, login } from "../redux/userSlice";
 import type { AppDispatch } from "../redux/store";
 import { Eye, EyeOff } from "lucide-react";
@@ -8,58 +9,75 @@ interface LoginPageProps {
   onNavigate: (page: string) => void;
 }
 
+interface FormData {
+  name: string;
+  email: string;
+  password: string;
+  confirmPassword: string;
+}
+
 const LoginPage: React.FC<LoginPageProps> = ({ onNavigate }) => {
   const dispatch = useDispatch<AppDispatch>();
   const [isSignup, setIsSignup] = useState(false);
-  const [formData, setFormData] = useState({
-    name: "",
-    email: "",
-    password: "",
-    confirmPassword: "",
-  });
-  const [errors, setErrors] = useState<Record<string, string>>({});
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [loginError, setLoginError] = useState("");
 
-  const validate = (): boolean => {
-    const e: Record<string, string> = {};
-    if (isSignup && !formData.name) e.name = "Name required";
-    if (!formData.email) e.email = "Email required";
-    if (!formData.password) e.password = "Password required";
-    if (isSignup && formData.password !== formData.confirmPassword)
-      e.confirmPassword = "Passwords do not match";
-    setErrors(e);
-    return Object.keys(e).length === 0;
-  };
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    watch,
+    reset,
+  } = useForm<FormData>({
+    mode: "onTouched",
+    defaultValues: {
+      name: "",
+      email: "",
+      password: "",
+      confirmPassword: "",
+    },
+  });
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!validate()) return;
+  const password = watch("password");
+
+  const onSubmit = (data: FormData) => {
+    setLoginError("");
 
     if (isSignup) {
       dispatch(
         signup({
-          name: formData.name,
-          email: formData.email,
-          password: formData.password,
+          name: data.name,
+          email: data.email,
+          password: data.password,
         })
       );
       alert("Account created! Please login.");
       setIsSignup(false);
+      reset();
     } else {
-      dispatch(login({ email: formData.email, password: formData.password }));
+      dispatch(login({ email: data.email, password: data.password }));
       const stored = localStorage.getItem("currentUser");
-      if (stored) onNavigate("songs");
-      else setErrors({ email: "Invalid credentials" });
+      if (stored) {
+        onNavigate("songs");
+      } else {
+        setLoginError("Invalid credentials");
+      }
     }
+  };
+
+  const toggleMode = () => {
+    setIsSignup(!isSignup);
+    setLoginError("");
+    reset();
   };
 
   return (
     <div className="min-h-screen flex py-[5vw] items-center justify-center bg-gradient-to-br from-yellow-400 via-amber-300 to-orange-400">
-      <div className=" flex items-center py-[2vw]   w-[65vw] rounded-md justify-center bg-gradient-to-br from-gray-100 to-gray-200 relative overflow-hidden">
+      <div className="flex items-center py-[2vw] w-[65vw] rounded-md justify-center bg-gradient-to-br from-gray-100 to-gray-200 relative overflow-hidden">
         {/* Left side - Form */}
-        <div className="w-full md:w-1/2 flex items-center justify-center px-8 z-10 ">
-          <div className="w-full max-w-md ">
+        <div className="w-full md:w-1/2 flex items-center justify-center px-8 z-10">
+          <div className="w-full max-w-md">
             <div className="mb-8">
               <div
                 className="text-4xl w-[20vw] font-bold mb-2"
@@ -70,7 +88,7 @@ const LoginPage: React.FC<LoginPageProps> = ({ onNavigate }) => {
               <p className="text-sm italic">of our cherished music!</p>
             </div>
 
-            <form onSubmit={handleSubmit} className="space-y-6">
+            <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
               {isSignup && (
                 <div>
                   <label className="block text-xs text-gray-500 uppercase mb-2">
@@ -78,32 +96,45 @@ const LoginPage: React.FC<LoginPageProps> = ({ onNavigate }) => {
                   </label>
                   <input
                     type="text"
-                    value={formData.name}
-                    onChange={(e) =>
-                      setFormData({ ...formData, name: e.target.value })
-                    }
+                    {...register("name", {
+                      required: isSignup ? "Name is required" : false,
+                      minLength: {
+                        value: 2,
+                        message: "Name must be at least 2 characters",
+                      },
+                    })}
                     className="w-full px-3 border-b-2 border-gray-300 focus:border-yellow-500 focus:outline-none bg-transparent text-black"
                   />
                   {errors.name && (
-                    <p className="text-red-500 text-xs mt-1">{errors.name}</p>
+                    <p className="text-red-500 text-xs mt-1">
+                      {errors.name.message}
+                    </p>
                   )}
                 </div>
               )}
 
               <div>
-                <label className="block  text-[0.8vw] text-gray-500 uppercase mb-2">
+                <label className="block text-[0.8vw] text-gray-500 uppercase mb-2">
                   Mail
                 </label>
                 <input
                   type="email"
-                  value={formData.email}
-                  onChange={(e) =>
-                    setFormData({ ...formData, email: e.target.value })
-                  }
+                  {...register("email", {
+                    required: "Email is required",
+                    pattern: {
+                      value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+                      message: "Invalid email address",
+                    },
+                  })}
                   className="w-full px-3 border-b-2 border-gray-300 focus:border-yellow-500 focus:outline-none bg-transparent text-black"
                 />
                 {errors.email && (
-                  <p className="text-red-500 text-xs mt-1">{errors.email}</p>
+                  <p className="text-red-500 text-xs mt-1">
+                    {errors.email.message}
+                  </p>
+                )}
+                {loginError && !errors.email && (
+                  <p className="text-red-500 text-xs mt-1">{loginError}</p>
                 )}
               </div>
 
@@ -115,14 +146,17 @@ const LoginPage: React.FC<LoginPageProps> = ({ onNavigate }) => {
                 <div className="relative">
                   <input
                     type={showPassword ? "text" : "password"}
-                    value={formData.password}
-                    onChange={(e) =>
-                      setFormData({ ...formData, password: e.target.value })
-                    }
+                    {...register("password", {
+                      required: "Password is required",
+                      minLength: {
+                        value: 6,
+                        message: "Password must be at least 6 characters",
+                      },
+                    })}
                     className="w-full px-3 border-b-2 border-gray-300 focus:border-yellow-500 focus:outline-none bg-transparent text-black pr-8"
                   />
                   <button
-                    
+                    type="button"
                     onClick={() => setShowPassword(!showPassword)}
                     className="absolute right-0 focus:!outline-none active:!outline-none !border-none top-1/2 -translate-y-1/2 !bg-transparent text-gray-600 hover:text-black"
                   >
@@ -131,7 +165,9 @@ const LoginPage: React.FC<LoginPageProps> = ({ onNavigate }) => {
                 </div>
 
                 {errors.password && (
-                  <p className="text-red-500 text-xs mt-1">{errors.password}</p>
+                  <p className="text-red-500 text-xs mt-1">
+                    {errors.password.message}
+                  </p>
                 )}
               </div>
 
@@ -144,13 +180,11 @@ const LoginPage: React.FC<LoginPageProps> = ({ onNavigate }) => {
                   <div className="relative">
                     <input
                       type={showConfirmPassword ? "text" : "password"}
-                      value={formData.confirmPassword}
-                      onChange={(e) =>
-                        setFormData({
-                          ...formData,
-                          confirmPassword: e.target.value,
-                        })
-                      }
+                      {...register("confirmPassword", {
+                        required: isSignup ? "Please confirm your password" : false,
+                        validate: (value) =>
+                          value === password || "Passwords do not match",
+                      })}
                       className="w-full px-3 border-b-2 border-gray-300 focus:border-yellow-500 focus:outline-none bg-transparent text-black pr-8"
                     />
                     <button
@@ -170,7 +204,7 @@ const LoginPage: React.FC<LoginPageProps> = ({ onNavigate }) => {
 
                   {errors.confirmPassword && (
                     <p className="text-red-500 text-xs mt-1">
-                      {errors.confirmPassword}
+                      {errors.confirmPassword.message}
                     </p>
                   )}
                 </div>
@@ -209,7 +243,7 @@ const LoginPage: React.FC<LoginPageProps> = ({ onNavigate }) => {
 
               <button
                 type="button"
-                onClick={() => setIsSignup(!isSignup)}
+                onClick={toggleMode}
                 className="text-blue-600 mt-4 hover:underline text-sm"
               >
                 {isSignup
@@ -221,7 +255,7 @@ const LoginPage: React.FC<LoginPageProps> = ({ onNavigate }) => {
         </div>
 
         {/* Right side - Image */}
-        <div className="hidden md:block md:w-1/2  relative">
+        <div className="hidden md:block md:w-1/2 relative">
           <div className="absolute inset-0 flex items-center justify-center">
             <div className="text-center">
               <div className="text-9xl mb-4">🎧</div>
