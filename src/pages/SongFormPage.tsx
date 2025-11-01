@@ -58,7 +58,7 @@ const SongFormPage: React.FC<SongFormPageProps> = ({ onNavigate, editSong }) => 
         <div className="flex gap-4 mt-6">
           <button 
             type="submit" 
-            className="bg-yellow-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-yellow-700 transition-colors flex-1"
+            className="!bg-yellow-600 !border-none text-white px-6 py-3 rounded-lg font-semibold hover:!bg-yellow-700 transition-colors flex-1"
           >
             {editSong ? "Update Song" : "Add Song"}
           </button>
@@ -66,7 +66,7 @@ const SongFormPage: React.FC<SongFormPageProps> = ({ onNavigate, editSong }) => 
           <button 
             type="button"
             onClick={() => onNavigate("songs")}
-            className="bg-gray-500 text-white px-6 py-3 rounded-lg font-semibold hover:bg-gray-600 transition-colors"
+            className="!bg-gray-500 !border-none text-white px-6 py-3 rounded-lg font-semibold hover:!bg-gray-600 transition-colors"
           >
             Cancel
           </button>

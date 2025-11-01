@@ -34,7 +34,7 @@ const SongListPage: React.FC<SongListPageProps> = ({ onNavigate }) => {
               dispatch(logout());
               onNavigate("login");
             }}
-            className="bg-red-600 text-white px-6 py-2 rounded-lg font-semibold hover:bg-red-700 transition-colors"
+            className="!bg-red-600 !border-none text-white px-6 py-2 rounded-lg font-semibold hover:!bg-red-700 transition-colors"
           >
             Logout
           </button>
@@ -42,7 +42,7 @@ const SongListPage: React.FC<SongListPageProps> = ({ onNavigate }) => {
 
         <button
           onClick={() => onNavigate("add")}
-          className="bg-yellow-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-yellow-700 transition-colors mb-6 shadow-lg"
+          className="!bg-yellow-600 text-white !border-none px-6 py-3 rounded-lg font-semibold hover:!bg-yellow-700 transition-colors mb-6 shadow-lg"
         >
           + Add New Song
         </button>
@@ -65,13 +65,13 @@ const SongListPage: React.FC<SongListPageProps> = ({ onNavigate }) => {
                 <div className="flex gap-3 mt-4">
                   <button
                     onClick={() => onNavigate("edit", song)}
-                    className="bg-blue-500 text-white px-4 py-2 rounded-lg font-semibold hover:bg-blue-600 transition-colors flex-1"
+                    className="!bg-blue-500 hover:!bg-blue-600 !border-none text-white px-4 py-2 rounded-lg font-semibold hover:bg-blue-600 transition-colors flex-1"
                   >
                     Edit
                   </button>
                   <button
                     onClick={() => handleDelete(song.id)}
-                    className="bg-red-500 text-white px-4 py-2 rounded-lg font-semibold hover:bg-red-600 transition-colors flex-1"
+                    className="!bg-red-500 hover:!bg-red-600 !border-none text-white px-4 py-2 rounded-lg font-semibold hover:bg-red-600 transition-colors flex-1"
                   >
                     Delete
                   </button>
